@@ -35,7 +35,7 @@ namespace StudentManagement
                 switch (number)
                 {
                     case 0:
-                        Console.WriteLine();
+                        Environment.Exit(number);
                         condition = false;
                         break;
                     case 1:
@@ -428,7 +428,69 @@ namespace StudentManagement
 
         private void registration_menu()
         {
-            throw new NotImplementedException();
+            // Registration Menu
+            Console.WriteLine("\n[3] Student registration:"
+            + "\n\t1 > Register course for student"
+            + "\n\t2 > List all courses"
+            + "\n\t0 > Back to main menu"
+            );
+
+            Action register = () =>
+                {
+                    String StudentID = prompt("Enter the Student's ID");
+                    String CourseID = prompt("Enter the Course's ID");
+                    
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        String sql = "INSERT INTO Registration"
+                            + "(StudentID, CourseID, CourseName)"
+                            + "VALUES (@StudentID, @CourseID, (SELECT CourseName FROM Courses Where CourseID = @CourseID2))";
+                        SqlCommand command = new SqlCommand(sql, connection);
+
+                        SqlParameter param1 = new SqlParameter("@StudentID", SqlDbType.NChar, 10);
+                        param1.Value = StudentID;
+                        command.Parameters.Add(param1);
+
+                        SqlParameter param2 = new SqlParameter("@CourseID", SqlDbType.NChar, 10);
+                        param2.Value = CourseID;
+                        command.Parameters.Add(param2);
+
+                        SqlParameter param3 = new SqlParameter("@CourseID2", SqlDbType.NChar, 10);
+                        param3.Value = CourseID;
+                        command.Parameters.Add(param3);
+                        
+                        try
+                        {
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                            Console.WriteLine("New course information added");
+                            connection.Close();
+                            return;
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Connection problem");
+                        }
+                    }
+                };
+
+            // To the next level of menu
+            int number = user_choice();
+            bool condition = true;
+            while(condition)
+            {
+                switch (number)
+                {
+                    case 0:
+                        main_menu();
+                        break;
+                    case 1:
+                        // Student menu complete
+                        register();
+                        break;
+                }
+
+            }
         }
     }
 }

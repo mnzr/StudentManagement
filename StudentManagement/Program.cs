@@ -11,7 +11,7 @@ namespace StudentManagement
         static void Main(string[] args)
         {
             Manage manage = new Manage();
-            Console.WriteLine(manage.connectionString);
+            //Console.WriteLine(manage.connectionString);
             Console.WriteLine("Now to the main program\n\n");
 
             manage.main_menu();
